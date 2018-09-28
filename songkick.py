@@ -1,0 +1,5 @@
+baseUrl        = "http://api.songkick.com/api/3.0/"
+userUrl        = baseUrl + "users/{}/artists/tracked.json?apikey={}"
+metroUrl       = baseUrl + "metro_areas/{}/calendar.json?apikey={}"
+metroSearchUrl = baseUrl + "search/locations.json?query={}&apikey={}"
+artistGigUrl   = baseUrl + "artists/{}/gigography.json?apikey={}"
