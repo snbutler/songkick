@@ -10,9 +10,14 @@ from   songkick import *
 if __name__ == "__main__":
 
     parser = ArgumentParser("Find interesting events in metro areas")
-    parser.add_argument("user", help="Songkick username")
-    parser.add_argument("id",   help="ID number of metro area")
+    parser.add_argument("user",    help="Songkick username")
+    parser.add_argument("id",      help="ID number of metro area")
+    parser.add_argument("keyfile", help="path to file containing apikey")
     args = parser.parse_args()
+
+    apikey = None
+    with open(args.keyfile) as f:
+        apikey = f.readline().strip()
 
     buffer = StringIO()
 
