@@ -4,7 +4,7 @@ import pycurl
 from   sys      import stderr
 from   StringIO import StringIO
 from   argparse import ArgumentParser
-from   songkick import *
+from   songkick_urls import *
 
 
 if __name__ == "__main__":

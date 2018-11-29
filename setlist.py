@@ -16,23 +16,27 @@ class Setlist:
     def findGig(self, **kwargs):
         url = self.gigUrl+"?"
 
-        for kw,arg in kwargs:
+        for kw,arg in kwargs.items():
             url += "{}={}&".format(kw, arg)
         if url[-1] == "&":
-            url = url[-1]
+            url = url[:-1]
+        print(url)
 
         results = []
 
         page = 1
-        while True:
-            x = self._req.get(self.userGigUrl.format(user, self._apikey)+"&per_page=50&page={}".format(page))
-            j = x.json()
-            # try:
-            if j["resultsPage"]["status"] == "ok" and j["resultsPage"]["results"]:
-                results += j["resultsPage"]["results"]["event"]
-                page    += 1
-            else:
+        done = False
+        while not done:
+            x = self._req.get(url+"&per_page=50&page={}".format(page))
+            if not x:
                 break
+            j = x.json()
+
+            results += j["setlist"]
+            done     = len(results) == j["total"]
+            page    += 1
+            # interact(local=locals())
+            # try:
             # except Exception as e:
                 # print(e)
                 # interact(local=locals())
