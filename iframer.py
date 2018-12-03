@@ -3,10 +3,12 @@
 from   sys      import stderr
 from   code     import interact
 from   argparse import ArgumentParser
-from   flask    import Flask, render_template, url_for, session
+from   flask    import Flask, render_template, url_for, session, g
 from   songkick import *
 from   setlist  import *
+import re
 import json
+import pprint
 
 def rev_date(date):
     (d, m, y) = date.split("-")
@@ -16,19 +18,26 @@ app = Flask(__name__)
 app.secret_key = b'_6#yxL"FeQ@z\n\xec]/'
 
 def check_session():
+    print("check_session")
+    print(session.keys())
     if not "sk" in session:
-        keys = {}
+        print("initialise sk key")
         with open("sk_api") as f:
-            keys["songkick"] = f.readline().strip()
+            session.sk = f.readline().strip()
+
+    if not "sl" in session:
+        print("initialise sl key")
         with open("sl_api") as f:
-            keys["setlist"] = f.readline().strip()
+            session.sl = f.readline().strip()
 
-        session["sk"] = Songkick(keys["songkick"])
-        session["sl"] = Setlist(keys["setlist"])
-
+    if not "gigs" in session:
         # gigs = sk.getUserGigs(args.user)
+        print("load from cache")
         with open("sk.cache") as cache:
-            session["gigs"] = json.load(cache)
+            session["gigs"] = json.load(cache)["songkick"]
+
+    g.sk = Songkick(session.sk)
+    g.sl = Setlist(session.sl)
     #interact(local=locals())
 
 @app.route("/user")
@@ -36,20 +45,52 @@ def check_session():
 def hello(username=None):
     return render_template('hello.html', name=username)
 
+@app.route("/gig")
 @app.route("/gig/<int:n>")
-def gig(n=None):
-    if n is None or n < 0 or n > abs(session["gigs"]):
-        return render_template('error.html', n=abs(session["gigs"]))
-    else:
-        check_session()
+@app.route("/gig/<int:n>/<int:m>")
+def gig(n=0, m=0):
+    check_session()
+    print("checked")
 
-        g = session["gigs"][n]
-        print(g)
-        setlists = []
-        for p in g["performance"]:
-            s = session["sl"].findGig(artistName=p["artist"]["displayName"], date=rev_date(g["start"]["date"]))
-        #interact(local=locals())
-        return render_template('iframer.html', sk_url=sk_url, setlists=setlists)
+    if n < 0 or n > len(session["gigs"]):
+        return render_template('error.html', n=len(session["gigs"]))
+    else:
+        print("valid n")
+        gig = session["gigs"][n]
+        if not "gig_n" in session or session["gig_n"] != n:
+            print("populating session")
+            session["gig_n"]    = n
+            session["setlists"] = []
+            #interact(local=locals())
+            for p in gig["performance"]:
+                for s in g.sl.findGig(artistName=p["artist"]["displayName"], date=rev_date(gig["start"]["date"])):
+                    session["setlists"].append(s["url"])
+
+        if not "setlists" in session or m < 0 or m > len(session["setlists"]):
+            print("invalid m")
+            return render_template('error.html', n=len(session["setlists"]))
+        else:
+            print("rendering")
+            #interact(local=locals())
+
+            pp = pprint.PrettyPrinter()
+
+            prev_n = n-1 if n > 0 else None
+            next_n = n+1 if n < len(session["gigs"])-1 else None
+            prev_m = m-1 if m > 0 else None
+            next_m = m+1 if m < len(session["setlists"])-1 else None
+
+            print(session["setlists"][m])
+
+            return render_template('iframer.html', 
+                                   #sk_url = re.sub("http:", "https:", re.sub("\?.*", "", gig["uri"])), 
+                                   sk_data = pp.pformat(gig),
+                                   sl_url  = session["setlists"][m],
+                                   n       = n,
+                                   m       = m,
+                                   max_n   = len(session["gigs"]),
+                                   max_m   = len(session["setlists"])
+                                  )
 
 with app.test_request_context():
     pass

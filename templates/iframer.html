@@ -1,13 +1,54 @@
 <!doctype html>
 <html>
-<head>
-<title>sk2sl</title>
-</head>
+  <head>
+    <title>sk2sl</title>
+    <link rel="stylesheet" type="text/css" href="{{url_for('static', filename='iframer.css')}}">
+  </head>
 <body>
-    <iframe align="left" width="100%" height="20%" src="{{sk_url}}">
-    {% for item in setlists %}
-    <iframe align="left" width="100%" height="20%" src="{{item}}">
-    <!-- <li><a href="{{ item.href }}">{{ item.caption }}</a></li> -->
-    {% endfor %}
+  <div id="songkick" class="content">
+    <iframe align="left" srcdoc="<pre>{{sk_data}}</pre>"></iframe> 
+    <!-- 
+    <iframe align="left" src="{{sk_url|safe}}"></iframe> 
+    <div>
+        <pre>{{sk_data}}</pre>
+    </div>
+    -->
+    <div class="buttons">
+      {%if n > 0 %}
+      <a href="/gig/{{n-1}}">prev</a>
+      {% else %}
+      prev
+      {% endif %}
+      |
+      {%if n < max_n %}
+      <a href="/gig/{{n+1}}">next</a>
+      {% else %}
+      next
+      {% endif %}
+    </div>
+  </div>
+  <div id="setlist" class="content">
+    <iframe align="left" src="{{sl_url}}"></iframe>
+    <div class="buttons">
+      {%if m > 0 %}
+      <a href="/gig/{{n}}/{{m-1}}">prev</a>
+      {% else %}
+      prev
+      {% endif %}
+      |
+      {%if m < max_m %}
+      <a href="/gig/{{n}}/{{m+1}}">next</a>
+      {% else %}
+      next
+      {% endif %}
+    </div>
+  </div>
+  {#
+  <!--
+  {% for item in setlists %}
+  <li><a href="{{ item.href }}">{{ item.caption }}</a></li>
+  {% endfor %}
+  -->
+  #}
 </body>
 </html>

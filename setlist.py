@@ -20,7 +20,7 @@ class Setlist:
             url += "{}={}&".format(kw, arg)
         if url[-1] == "&":
             url = url[:-1]
-        print(url)
+        #print(url)
 
         results = []
 
