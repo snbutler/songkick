@@ -1,0 +1,13 @@
+<!doctype html>
+<html>
+<head>
+<title>sk2sl</title>
+</head>
+<body>
+    <iframe align="left" width="100%" height="20%" src="{{sk_url}}">
+    {% for item in setlists %}
+    <iframe align="left" width="100%" height="20%" src="{{item}}">
+    <!-- <li><a href="{{ item.href }}">{{ item.caption }}</a></li> -->
+    {% endfor %}
+</body>
+</html>
