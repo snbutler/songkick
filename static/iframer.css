@@ -1,15 +1,23 @@
 div.content
 {
   width:   50%;
-  height: 100vh;
-  border: 1px red;
+  height: 98vh;
 }
 
 iframe
 {
   width:  100%;
-  height:  98vh;
+  height:  95%;
+  border:  0px;
 }
 
-#songkick { float: left; }
-#setlist  { float: right; }
+#songkick 
+{ 
+  float: left;
+  width: 25%; 
+}
+#setlist  
+{ 
+  float: right; 
+  width: 70%;
+}

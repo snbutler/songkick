@@ -6,13 +6,22 @@
   </head>
 <body>
   <div id="songkick" class="content">
-    <iframe align="left" srcdoc="<pre>{{sk_data}}</pre>"></iframe> 
-    <!-- 
-    <iframe align="left" src="{{sk_url|safe}}"></iframe> 
-    <div>
-        <pre>{{sk_data}}</pre>
-    </div>
-    -->
+    <iframe align="left" srcdoc="
+      {% for item in sk_data.details %}
+      {{item}}<br/>
+      {% endfor %}
+      <ul>
+      {% for artist, setlists in sk_data.setlists.items() %}
+      <li>{{artist}}</li>
+        <ul>
+        {% for sl in setlists %}
+        <li><a href='{{ sl.sl_url }}' target='setlist_if'>{{ sl.sl_name }}</a></li>
+        {% endfor %}
+        </ul>
+      {% endfor %}
+      </ul>
+     ">
+    </iframe> 
     <div class="buttons">
       {%if n > 0 %}
       <a href="/gig/{{n-1}}">prev</a>
@@ -28,7 +37,9 @@
     </div>
   </div>
   <div id="setlist" class="content">
-    <iframe align="left" src="{{sl_url}}"></iframe>
+    <iframe align="left" src="{{sl_url}}" name="setlist_if"></iframe>
+    {#
+    <!--
     <div class="buttons">
       {%if m > 0 %}
       <a href="/gig/{{n}}/{{m-1}}">prev</a>
@@ -42,13 +53,8 @@
       next
       {% endif %}
     </div>
+    -->
+    #}
   </div>
-  {#
-  <!--
-  {% for item in setlists %}
-  <li><a href="{{ item.href }}">{{ item.caption }}</a></li>
-  {% endfor %}
-  -->
-  #}
 </body>
 </html>
