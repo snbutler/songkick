@@ -3,6 +3,16 @@
   <head>
     <title>sk2sl</title>
     <link rel="stylesheet" type="text/css" href="{{url_for('static', filename='iframer.css')}}">
+    <script>
+    {% if create %}
+    function fillForm()
+    {
+      var iframe = document.getElementById("setlist_if");
+      var elmnt = iframe.contentWindow.document.getElementById("");
+      elmnt.style.display = "none";
+    }
+    {% endif%}
+    </script>
   </head>
 <body>
   <div id="songkick" class="content">
@@ -37,7 +47,7 @@
     </div>
   </div>
   <div id="setlist" class="content">
-    <iframe align="left" src="{{sl_url}}" name="setlist_if"></iframe>
+    <iframe align="left" src="{{sl_url}}" name="setlist_if" id="setlist_if"></iframe>
     {#
     <!--
     <div class="buttons">
